@@ -18,6 +18,10 @@ function searchPerson() {
     // TODO: loop in res.results, then condition => display if department = "Acting"
 
     .then((res) => {
+      if (res.results.length == 0) {
+        apiResults.innerText = "Aucun résultat trouvé pour votre recherche.";
+      }
+
       for (let i = 0; i < res.results.length; i++) {
         let personProfile = document.createElement("div");
         personProfile.setAttribute("class", "profile");
@@ -35,6 +39,7 @@ function searchPerson() {
           );
           personPhoto.setAttribute("alt", `${res.results[i].name}`);
         }
+
         personProfile.appendChild(personPhoto);
         personProfile.appendChild(personName);
         apiResults.appendChild(personProfile);
