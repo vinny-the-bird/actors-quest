@@ -1,29 +1,43 @@
 body {
-    background-color: blanchedalmond;
+  background-color: blanchedalmond;
 }
 
-.container{
-    display: flex;
-    border: 5px solid rgb(20, 234, 45);
+.container {
+  display: flex;
+  border: 5px solid rgb(20, 234, 45);
 }
 
 .subContainer {
-    border: 1px solid black;
-    width: 100%;
-    padding: 10px;
+  border: 1px solid black;
+  width: 100%;
+  padding: 10px;
 }
 
 #research {
-    min-height: 100px;
+  min-height: 100px;
 }
 
 #results {
-    min-height: 100px;
-    background-color: rgb(100, 246, 159);
+  min-height: 100px;
+  background-color: rgb(179, 249, 207);
+  display: flex;
+  flex-wrap: wrap;
 }
 
 #information {
-    min-height: 100px;
-    background-color: rgb(229, 201, 255);
-    height: 95%;
+  min-height: 100px;
+  background-color: rgb(229, 201, 255);
+  height: 95%;
+}
+
+.profile {
+  background-color: rgb(253, 158, 177);
+  margin: 3px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+img {
+    margin-right: 10px;
 }
