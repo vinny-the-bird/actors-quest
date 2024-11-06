@@ -1,0 +1,29 @@
+body {
+    background-color: blanchedalmond;
+}
+
+.container{
+    display: flex;
+    border: 5px solid rgb(20, 234, 45);
+}
+
+.subContainer {
+    border: 1px solid black;
+    width: 100%;
+    padding: 10px;
+}
+
+#research {
+    min-height: 100px;
+}
+
+#results {
+    min-height: 100px;
+    background-color: rgb(100, 246, 159);
+}
+
+#information {
+    min-height: 100px;
+    background-color: rgb(229, 201, 255);
+    height: 95%;
+}
