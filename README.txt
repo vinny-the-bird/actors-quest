@@ -1,19 +1,18 @@
 ACTORS QUEST
 
-Application de recherche d'acteurs et d'actrice sur la base de données themoviedb
+Application for researching actors and actresses in the 'themoviedb' database.
 
 https://www.themoviedb.org/
 
 
-Configuration de l'appel API 
+Configuring the API call 
 
-- Créer un fichier env.js afin de passer les paramètres nécessaires aux requêtes.
-- Dans ce fichier, créer les lignes suivantes : 
+- Create an env.js file to save the parameters required for the queries.
+- In this file, create the following lines: 
 
-    export const API_TOKEN = "1234";
-    export const API_URL = "https://api.themoviedb.org/3/search";
-    export const API_OPTIONS = "&include_adult=false&language=en-US&page=1";
+    export const API_TOKEN = ‘1234’;
+    export const API_URL = ‘https://api.themoviedb.org/3/search’;
+    export const API_OPTIONS = ‘&include_adult=false&language=en-US&page=1’;
 
-- remplacer la valeur de API_TOKEN par votre propre token.
-- sauvegarder et conserver ce fichier uniquement pour votre utilisation en local.
-
+- Replace the API_TOKEN value with your own token.
+- Save and keep this file for local use only.
