@@ -7,12 +7,12 @@ https://www.themoviedb.org/
 
 Configuring the API call 
 
-- Create an env.js file to save the parameters required for the queries.
+- Create an env.js file to save the environment parameters required for the queries.
 - In this file, create the following lines: 
 
-    export const API_TOKEN = ‘1234’;
-    export const API_URL = ‘https://api.themoviedb.org/3/search’;
-    export const API_OPTIONS = ‘&include_adult=false&language=en-US&page=1’;
+    export const API_TOKEN = '1234';
+    export const API_URL = 'https://your_url_here';
 
 - Replace the API_TOKEN value with your own token.
+- Replace the API_URL value with the needed URL.
 - Save and keep this file for local use only.

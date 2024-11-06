@@ -1,7 +1,7 @@
-import { API_TOKEN } from "./env.js";
-import { API_URL } from "./env.js";
-import { API_OPTIONS } from "./env.js";
-import { API_PROFILE_PHOTO } from "./env.js";
+import { API_TOKEN, API_URL } from "./env.js";
+
+const API_OPTIONS = "&include_adult=false&language=en-US&page=1";
+const API_PROFILE_PHOTO = "https://image.tmdb.org/t/p/w45"
 
 const researchInput = document.getElementById("researchInput");
 const apiResults = document.getElementById("results");
@@ -10,9 +10,8 @@ const infoDisplayed = document.getElementById("display");
 function searchPerson() {
   apiResults.innerHTML = "";
   let inputToLowerCase = researchInput.value.toLowerCase();
-  console.log(`Searching for : ${inputToLowerCase}`);
 
-  fetch(`${API_URL}/person?query=${inputToLowerCase}${API_OPTIONS}`, options)
+  fetch(`${API_URL}/3/search/person?query=${inputToLowerCase}${API_OPTIONS}`, options)
     .then((res) => res.json())
     // .then(res => console.log(res.results))
     // TODO: loop in res.results, then condition => display if department = "Acting"
