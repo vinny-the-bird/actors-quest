@@ -45,18 +45,18 @@ function searchPerson() {
         personProfile.appendChild(personName);
         apiResults.appendChild(personProfile);
         
-        personProfile.addEventListener("click", (event) => {
-          event.preventDefault();
-          // let profileBlock = document.getElementsByClassName("profile");
-          // console.log(`details from person id ${res.results[i].id}`);
-          
+        personProfile.addEventListener("click", () => {
           displayPersonDetails();
-          // profileBlock.addEventListener("click", displayPersonDetails);
         });
 
         function displayPersonDetails(){
           let personId = res.results[i].id;
           console.log("🚀 ~ displayPersonDetails ~ personId:", personId);
+          // TODO: recup id -> fetch -> call
+          fetch(`${API_URL}/3/person/${personId}`, options)
+          .then(res => res.json())
+          .then(res => console.log(res))
+          .catch(err => console.error(err));
         }
       }
     })
