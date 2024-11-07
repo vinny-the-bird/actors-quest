@@ -23,6 +23,8 @@ function searchPerson() {
 
       for (let i = 0; i < res.results.length; i++) {
         let personProfile = document.createElement("div");
+        personProfile.setAttribute("href", "www.google.com");
+        personProfile.setAttribute("id", `${res.results[i].id}`);
         personProfile.setAttribute("class", "profile");
         let personName = document.createElement("h4");
         personName.innerText = res.results[i].name;
@@ -42,6 +44,20 @@ function searchPerson() {
         personProfile.appendChild(personPhoto);
         personProfile.appendChild(personName);
         apiResults.appendChild(personProfile);
+        
+        personProfile.addEventListener("click", (event) => {
+          event.preventDefault();
+          // let profileBlock = document.getElementsByClassName("profile");
+          // console.log(`details from person id ${res.results[i].id}`);
+          
+          displayPersonDetails();
+          // profileBlock.addEventListener("click", displayPersonDetails);
+        });
+
+        function displayPersonDetails(){
+          let personId = res.results[i].id;
+          console.log("🚀 ~ displayPersonDetails ~ personId:", personId);
+        }
       }
     })
     .catch((err) => console.error(err));
@@ -65,7 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", searchPerson);
 });
 
+
 export default {
   capitalizeFirstLetter,
   searchPerson,
+  // displayPersonDetails,
 };

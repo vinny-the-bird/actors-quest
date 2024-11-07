@@ -27,7 +27,7 @@ body {
 #information {
   min-height: 100px;
   background-color: rgb(229, 201, 255);
-  height: 95%;
+  min-height: 200px;
 }
 
 .profile {
@@ -40,4 +40,9 @@ body {
 
 img {
     margin-right: 10px;
+}
+
+a {
+  /* display: block; */
+  text-decoration: none;
 }
