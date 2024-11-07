@@ -1,26 +1,28 @@
 import { API_TOKEN, API_URL } from "./env.js";
 
 const API_OPTIONS = "&include_adult=false&language=en-US&page=1";
-const API_PROFILE_PHOTO = "https://image.tmdb.org/t/p/w45"
+const API_PROFILE_PHOTO = "https://image.tmdb.org/t/p/w45";
+const API_INFO_PHOTO = "https://image.tmdb.org/t/p/w185";
 
 const researchInput = document.getElementById("researchInput");
 const apiResults = document.getElementById("results");
-const infoDisplayed = document.getElementById("display");
+const infoDisplayed = document.getElementById("information");
 
 function searchPerson() {
   apiResults.innerHTML = "";
   let inputToLowerCase = researchInput.value.toLowerCase();
 
-  fetch(`${API_URL}/3/search/person?query=${inputToLowerCase}${API_OPTIONS}`, options)
+  fetch(
+    `${API_URL}/3/search/person?query=${inputToLowerCase}${API_OPTIONS}`,
+    options
+  )
     .then((res) => res.json())
-    // .then(res => console.log(res.results))
-    // TODO: loop in res.results, then condition => display if department = "Acting"
-
     .then((res) => {
       if (res.results.length == 0) {
         apiResults.innerText = "Aucun résultat trouvé pour votre recherche.";
       }
 
+      console.log(res.results.length);
       for (let i = 0; i < res.results.length; i++) {
         let personProfile = document.createElement("div");
         personProfile.setAttribute("href", "www.google.com");
@@ -44,19 +46,72 @@ function searchPerson() {
         personProfile.appendChild(personPhoto);
         personProfile.appendChild(personName);
         apiResults.appendChild(personProfile);
-        
+
         personProfile.addEventListener("click", () => {
-          displayPersonDetails();
+          displayPersonInfo();
         });
 
-        function displayPersonDetails(){
+        function displayPersonInfo() {
+          infoDisplayed.innerHTML = "";
           let personId = res.results[i].id;
-          console.log("🚀 ~ displayPersonDetails ~ personId:", personId);
-          // TODO: recup id -> fetch -> call
+          console.log("🚀 ~ displayPersonInfo ~ personId:", personId);
           fetch(`${API_URL}/3/person/${personId}`, options)
-          .then(res => res.json())
-          .then(res => console.log(res))
-          .catch(err => console.error(err));
+            .then((res) => res.json())
+
+            .then((res) => {
+              let infoName = document.createElement("h3");
+              infoName.innerText = `${res.name}`;
+
+              let infoPhoto = document.createElement("img");
+
+              if (!res.profile_path) {
+                infoPhoto.setAttribute(
+                  "src",
+                  "media/empty_profile_photo_thin.jpg"
+                );
+                infoPhoto.setAttribute("width", "185px");
+              } else {
+                infoPhoto.setAttribute(
+                  "src",
+                  `${API_INFO_PHOTO}${res.profile_path}`
+                );
+                infoPhoto.setAttribute("alt", `${res.name}`);
+              }
+
+              //TODO: if null => display "N/A"
+              let infoBirthday = document.createElement("p");
+              infoBirthday.innerText = `Naissance : ${res.birthday}`;
+
+              let infoDeathday = document.createElement("p");
+              infoDeathday.innerText = `Décès : ${res.deathday}`;
+
+              let infoBirthplace = document.createElement("p");
+              infoBirthplace.innerText = `Lieu de naissance : ${res.place_of_birth}`;
+
+              //TODO: add switch case gender
+              let infoGender = document.createElement("p");
+              infoGender.innerText = `Genre : ${res.gender}`;
+
+              //TODO: display names in a list
+              let infoAKA = document.createElement("li");
+              infoAKA.innerText = `Autres noms : ${res.also_known_as}`;
+
+              let infoBiography = document.createElement("p");
+              infoBiography.innerText = `Biographie : ${res.biography}`;
+
+              infoDisplayed.appendChild(infoName);
+              infoDisplayed.appendChild(infoPhoto);
+              infoDisplayed.appendChild(infoBirthday);
+              infoDisplayed.appendChild(infoBirthplace);
+              if (res.deathday) {
+                infoDisplayed.appendChild(infoDeathday);
+              }
+              infoDisplayed.appendChild(infoGender);
+              infoDisplayed.appendChild(infoAKA);
+              infoDisplayed.appendChild(infoBiography);
+            })
+
+            .catch((err) => console.error(err));
         }
       }
     })
@@ -81,9 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", searchPerson);
 });
 
-
 export default {
   capitalizeFirstLetter,
   searchPerson,
-  // displayPersonDetails,
 };
