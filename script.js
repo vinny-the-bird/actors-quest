@@ -88,9 +88,24 @@ function searchPerson() {
               let infoBirthplace = document.createElement("p");
               infoBirthplace.innerText = `Lieu de naissance : ${res.place_of_birth}`;
 
-              //TODO: add switch case gender
               let infoGender = document.createElement("p");
-              infoGender.innerText = `Genre : ${res.gender}`;
+              let genderName;
+              switch(res.gender) {
+                case 0:
+                  genderName = "N/A";
+                  break;
+                case 1:
+                  genderName = "Femme";
+                  break;
+                case 2:
+                  genderName = "Homme";
+                  break;
+                case 3:
+                  genderName = "Non-binaire";
+                  break;
+              }
+
+              infoGender.innerText = `Genre : ${genderName}`;
 
               //TODO: display names in a list
               let infoAKA = document.createElement("li");
