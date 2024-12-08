@@ -20,12 +20,13 @@ function searchPerson() {
     .then((res) => {
       if (res.results.length == 0) {
         apiResults.innerText = "Aucun résultat trouvé pour votre recherche.";
+        return;
       }
 
       console.log(res.results.length);
+
       for (let i = 0; i < res.results.length; i++) {
         let personProfile = document.createElement("div");
-        personProfile.setAttribute("href", "www.google.com");
         personProfile.setAttribute("id", `${res.results[i].id}`);
         personProfile.setAttribute("class", "profile");
         let personName = document.createElement("h4");
@@ -47,11 +48,27 @@ function searchPerson() {
         personProfile.appendChild(personName);
         apiResults.appendChild(personProfile);
 
+
         personProfile.addEventListener("click", () => {
+          let currentlyActive = document.querySelector(".active");
+          if (currentlyActive) {
+            currentlyActive.classList.remove("active");
+          }
+
+          personProfile.classList.add("active");
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+          console.log(personProfile)
           displayPersonInfo();
         });
 
+
         function displayPersonInfo() {
+
           infoDisplayed.innerHTML = "";
           let personId = res.results[i].id;
           console.log("🚀 ~ displayPersonInfo ~ personId:", personId);
@@ -78,7 +95,6 @@ function searchPerson() {
                 infoPhoto.setAttribute("alt", `${res.name}`);
               }
 
-              //TODO: if null => display "N/A"
               let infoBirthday = document.createElement("p");
               infoBirthday.innerText = `Naissance : ${res.birthday}`;
 
@@ -108,21 +124,36 @@ function searchPerson() {
               infoGender.innerText = `Genre : ${genderName}`;
 
               //TODO: display names in a list
-              let infoAKA = document.createElement("li");
-              infoAKA.innerText = `Autres noms : ${res.also_known_as}`;
+              let infoAKA = null
+              if (!res.also_known_as.length == 0) {
+                infoAKA = document.createElement("li");
+                infoAKA.innerText = `Autres noms : ${res.also_known_as}`;
+              }
 
               let infoBiography = document.createElement("p");
               infoBiography.innerText = `Biographie : ${res.biography}`;
 
               infoDisplayed.appendChild(infoName);
               infoDisplayed.appendChild(infoPhoto);
-              infoDisplayed.appendChild(infoBirthday);
-              infoDisplayed.appendChild(infoBirthplace);
+
+              if (res.birthday) {
+                infoDisplayed.appendChild(infoBirthday);
+              }
+              
+              if (res.place_of_birth) {
+                infoDisplayed.appendChild(infoBirthplace);
+              }
+
               if (res.deathday) {
                 infoDisplayed.appendChild(infoDeathday);
               }
+
               infoDisplayed.appendChild(infoGender);
-              infoDisplayed.appendChild(infoAKA);
+
+              if (infoAKA) {
+                infoDisplayed.appendChild(infoAKA);
+              }
+
               infoDisplayed.appendChild(infoBiography);
             })
 
