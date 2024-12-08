@@ -7,6 +7,7 @@ const API_INFO_PHOTO = "https://image.tmdb.org/t/p/w185";
 const researchInput = document.getElementById("researchInput");
 const apiResults = document.getElementById("results");
 const infoDisplayed = document.getElementById("information");
+const moviesResults = document.getElementById("filmography");
 
 function searchPerson() {
   apiResults.innerHTML = "";
@@ -62,11 +63,12 @@ function searchPerson() {
             behavior: "smooth"
           });
 
-          console.log(personProfile)
           displayPersonInfo();
+          displayActorMovies();
         });
 
 
+          // display a person
         function displayPersonInfo() {
 
           infoDisplayed.innerHTML = "";
@@ -126,7 +128,7 @@ function searchPerson() {
               //TODO: display names in a list
               let infoAKA = null
               if (!res.also_known_as.length == 0) {
-                infoAKA = document.createElement("li");
+                infoAKA = document.createElement("p");
                 infoAKA.innerText = `Autres noms : ${res.also_known_as}`;
               }
 
@@ -159,10 +161,35 @@ function searchPerson() {
 
             .catch((err) => console.error(err));
         }
-      }
-    })
+
+        function displayActorMovies() {
+
+          moviesResults.innerHTML = "";
+          let personId = res.results[i].id;
+
+          fetch(`${API_URL}/3/person/${personId}/movie_credits`, options)
+            .then((res) => res.json())
+            .then((res) => {
+              console.log("ok let's go")
+              console.log(res.cast.length)
+              for (let i = 0; i < res.cast.length; i++) {
+                let movieList = document.createElement("div");
+                let movieTitle = document.createElement("li");
+
+                console.log(res.cast[i].original_title)
+                movieTitle.innerText = res.cast[i].original_title;
+     
+                movieList.appendChild(movieTitle);
+                moviesResults.appendChild(movieList);
+                }
+              })
+            .catch((err) => console.error(err));
+          }
+    }}
+  )
     .catch((err) => console.error(err));
 }
+
 
 function capitalizeFirstLetter(word) {
   wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
