@@ -225,8 +225,8 @@ async function updateActorHistory(id) {
       button2.innerHTML = `<a id="${id}" href="#">${name}</a>`;
 
       button2.addEventListener("click", () => {
-          console.log(`Actor clicked: ${name} - id ${id}`);
           displayPersonInfo(id);
+          apiResults.innerHTML = "";
       });
 
       historyList.appendChild(button2);
