@@ -9,7 +9,6 @@ const apiResults = document.getElementById("results");
 const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById('history'); 
-// let personId;
 
 function searchPerson() {
 
@@ -31,7 +30,6 @@ function searchPerson() {
         let personProfile = document.createElement("div");
         let personId = res.results[i].id;
 
-        // personProfile.setAttribute("id", `${res.results[i].id}`);
         personProfile.setAttribute("id", `${personId}`);
         personProfile.setAttribute("class", "profile");
         let personName = document.createElement("h4");
@@ -76,12 +74,9 @@ function searchPerson() {
     }}
   )
     .catch((err) => console.error(err));
-}  // END OF searchPerson
+}
 
 
-  // HERE OUT OF 1ST FUNCTION //
-
-// display a person
 function displayPersonInfo(id) {
   console.log("clicked displayPersonInfo : ", id)
   infoDisplayed.innerHTML = "";
@@ -175,8 +170,6 @@ function displayPersonInfo(id) {
     .catch((err) => console.error(err));
 }
 
-
-
 function displayActorMovies(id) {
 
   moviesResults.innerHTML = "";
@@ -203,7 +196,6 @@ function displayActorMovies(id) {
 }
 
 
-// // ================= session storage =================
 async function updateActorHistory(id) {
     await fetch(`${API_URL}/3/person/${id}`, options)
     .then((res) => res.json())
@@ -211,48 +203,35 @@ async function updateActorHistory(id) {
         let actorName = res.name;
         
         let history = JSON.parse(sessionStorage.getItem('actorHistory')) || [];
-        history = [actorName, ...history.filter(name => name !== actorName)];
-      
+        history = [{ id, name: actorName }, ...history.filter(actor => actor.id !== id)];
         if (history.length > 3) {
             history.pop();
         }
       
         sessionStorage.setItem('actorHistory', JSON.stringify(history));
-        displayActorHistory(id, actorName);
+        displayActorHistory();
       })
     .catch((err) => console.error(err));
 }
 
+  function displayActorHistory() {
 
-//     // // SOLUTION 2 - j'en fais des boutons sur lequel je met un event listener... (suite ci-dessous)
-  function displayActorHistory(id, actor) {
-  const button = document.createElement('button');
-  button.innerHTML = `<a id="${id}">${actor}</a>`;
-  historyList.appendChild(button);
-  attachButtonListener(id)
-  }
+    const history = JSON.parse(sessionStorage.getItem('actorHistory')) || [];
 
-  //  => EVENT LISTENER POUR LA SOLUTION 2, sensé appeler la fonction displayPersonInfo()
-// document.addEventListener("DOMContentLoaded", () => {
-//   const button2 = document.getElementById(`${id}`);
-//   button2.addEventListener("click", displayPersonInfo);
-// });
+    historyList.innerHTML = '';
 
-function attachButtonListener(id) {
-  document.addEventListener("DOMContentLoaded", () => {
-    const button2 = document.getElementById(id); // Use the provided ID
-    console.log("🚀 ~ document.addEventListener ~ button2:", button2)
-    if (button2) {
-      button2.addEventListener("click", displayPersonInfo);
-    } else {
-      console.error(`Element with ID "${id}" not found.`);
-    }
+    history.forEach(({id, name}) => {
+      const button2 = document.createElement('button');
+      button2.innerHTML = `<a id="${id}" href="#">${name}</a>`;
+
+      button2.addEventListener("click", () => {
+          console.log(`Actor clicked: ${name} - id ${id}`);
+          displayPersonInfo(id);
+      });
+
+      historyList.appendChild(button2);
   });
-}
-
-// Call the function with the actual ID of the button
-// attachButtonListener("dynamicButtonId");
-
+  };
 
 
 function capitalizeFirstLetter(word) {
@@ -274,9 +253,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// window.onload = function() {
-//   displayActorHistory(); // Affiche l'historique à l'ouverture de la page
-// };
+window.onload = function() {
+  displayActorHistory(); 
+};
 
 
 export default {
