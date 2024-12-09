@@ -16,3 +16,6 @@ Configuring the API call
 - Replace the API_TOKEN value with your own token.
 - Replace the API_URL value with the needed URL.
 - Save and keep this file for local use only.
+
+Disclaimer: this is a WIP project. Colors are not final and used for current development.
+
