@@ -80,8 +80,6 @@ function searchPerson() {
 function displayPersonInfo(id) {
   console.log("clicked displayPersonInfo : ", id)
   infoDisplayed.innerHTML = "";
-  // let personId = res.results[i].id;
-  // console.log("🚀 ~ displayPersonInfo ~ personId:", personId);
   fetch(`${API_URL}/3/person/${id}`, options)
     .then((res) => res.json())
 
@@ -133,7 +131,6 @@ function displayPersonInfo(id) {
 
       infoGender.innerText = `Genre : ${genderName}`;
 
-      //TODO: display names in a list
       let infoAKA = null
       if (!res.also_known_as.length == 0) {
         infoAKA = document.createElement("p");
