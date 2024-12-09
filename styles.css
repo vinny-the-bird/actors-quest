@@ -27,6 +27,10 @@ body {
   min-height: 200px;
 }
 
+li {
+  cursor: pointer;
+}
+
 
 img {
     margin-right: 10px;
