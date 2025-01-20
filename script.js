@@ -8,10 +8,10 @@ const researchInput = document.getElementById("researchInput");
 const apiResults = document.getElementById("results");
 const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
-const historyList = document.getElementById('history'); 
+const historyList = document.getElementById("history");
 
+// TODO: search in both crew & cast. Fix for only cast
 function searchPerson() {
-
   apiResults.innerHTML = "";
   let inputToLowerCase = researchInput.value.toLowerCase();
 
@@ -51,7 +51,6 @@ function searchPerson() {
         personProfile.appendChild(personName);
         apiResults.appendChild(personProfile);
 
-
         personProfile.addEventListener("click", () => {
           let currentlyActive = document.querySelector(".active");
           if (currentlyActive) {
@@ -62,23 +61,20 @@ function searchPerson() {
 
           window.scrollTo({
             top: 0,
-            behavior: "smooth"
+            behavior: "smooth",
           });
 
           displayPersonInfo(personId);
           displayActorMovies(personId);
           updateActorHistory(personId);
-
         });
-
-    }}
-  )
+      }
+    })
     .catch((err) => console.error(err));
 }
 
-
 function displayPersonInfo(id) {
-  console.log("clicked displayPersonInfo : ", id)
+  console.log("clicked displayPersonInfo : ", id);
   infoDisplayed.innerHTML = "";
   fetch(`${API_URL}/3/person/${id}`, options)
     .then((res) => res.json())
@@ -90,16 +86,10 @@ function displayPersonInfo(id) {
       let infoPhoto = document.createElement("img");
 
       if (!res.profile_path) {
-        infoPhoto.setAttribute(
-          "src",
-          "media/empty_profile_photo_thin.jpg"
-        );
+        infoPhoto.setAttribute("src", "media/empty_profile_photo_thin.jpg");
         infoPhoto.setAttribute("width", "185px");
       } else {
-        infoPhoto.setAttribute(
-          "src",
-          `${API_INFO_PHOTO}${res.profile_path}`
-        );
+        infoPhoto.setAttribute("src", `${API_INFO_PHOTO}${res.profile_path}`);
         infoPhoto.setAttribute("alt", `${res.name}`);
       }
 
@@ -114,7 +104,7 @@ function displayPersonInfo(id) {
 
       let infoGender = document.createElement("p");
       let genderName;
-      switch(res.gender) {
+      switch (res.gender) {
         case 0:
           genderName = "N/A";
           break;
@@ -131,7 +121,7 @@ function displayPersonInfo(id) {
 
       infoGender.innerText = `Genre : ${genderName}`;
 
-      let infoAKA = null
+      let infoAKA = null;
       if (!res.also_known_as.length == 0) {
         infoAKA = document.createElement("p");
         infoAKA.innerText = `Autres noms : ${res.also_known_as}`;
@@ -146,7 +136,7 @@ function displayPersonInfo(id) {
       if (res.birthday) {
         infoDisplayed.appendChild(infoBirthday);
       }
-      
+
       if (res.place_of_birth) {
         infoDisplayed.appendChild(infoBirthplace);
       }
@@ -168,7 +158,6 @@ function displayPersonInfo(id) {
 }
 
 function displayActorMovies(id) {
-
   moviesResults.innerHTML = "";
 
   fetch(`${API_URL}/3/person/${id}/movie_credits`, options)
@@ -179,57 +168,119 @@ function displayActorMovies(id) {
         let movieTitle = document.createElement("li");
 
         movieTitle.innerText = res.cast[i].original_title;
+        let movieId = res.cast[i].id;
 
         movieList.appendChild(movieTitle);
         moviesResults.appendChild(movieList);
 
         movieTitle.addEventListener("click", () => {
-          console.log(`display all actors from movie ${movieTitle.innerText}`)
-        })
-
-        }
-      })
+          console.log(`show actors from ${movieTitle.innerText} ${movieId}`);
+          searchActorsByMovie(movieId);
+        });
+      }
+    })
     .catch((err) => console.error(err));
 }
 
+// TODO: duplicate code: build function to display actors in searchPerson()
+// and searchActorsByMovie(), changing variable by "results" or "cast"
+// depending which function call
+function searchActorsByMovie(id) {
+  apiResults.innerHTML = "";
 
-async function updateActorHistory(id) {
-    await fetch(`${API_URL}/3/person/${id}`, options)
+  fetch(`${API_URL}/3/movie/${id}/credits`, options)
     .then((res) => res.json())
     .then((res) => {
-        let actorName = res.name;
-        
-        let history = JSON.parse(sessionStorage.getItem('actorHistory')) || [];
-        history = [{ id, name: actorName }, ...history.filter(actor => actor.id !== id)];
-        if (history.length > 3) {
-            history.pop();
+      if (res.cast.length == 0) {
+        apiResults.innerText = "Aucun résultat trouvé pour votre recherche.";
+        return;
+      }
+
+      for (let i = 0; i < res.cast.length; i++) {
+        let personProfile = document.createElement("div");
+        let personId = res.cast[i].id;
+
+        personProfile.setAttribute("id", `${personId}`);
+        personProfile.setAttribute("class", "profile");
+        let personName = document.createElement("h4");
+        personName.innerText = res.cast[i].name;
+        let personPhoto = document.createElement("img");
+
+        if (!res.cast[i].profile_path) {
+          personPhoto.setAttribute("src", "media/empty_profile_photo_thin.jpg");
+          personPhoto.setAttribute("width", "45px");
+        } else {
+          personPhoto.setAttribute(
+            "src",
+            `${API_PROFILE_PHOTO}${res.cast[i].profile_path}`
+          );
+          personPhoto.setAttribute("alt", `${res.cast[i].name}`);
         }
-      
-        sessionStorage.setItem('actorHistory', JSON.stringify(history));
-        displayActorHistory();
-      })
+
+        personProfile.appendChild(personPhoto);
+        personProfile.appendChild(personName);
+        apiResults.appendChild(personProfile);
+
+        personProfile.addEventListener("click", () => {
+          let currentlyActive = document.querySelector(".active");
+          if (currentlyActive) {
+            currentlyActive.classList.remove("active");
+          }
+
+          personProfile.classList.add("active");
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+
+          displayPersonInfo(personId);
+          displayActorMovies(personId);
+          updateActorHistory(personId);
+        });
+      }
+    })
     .catch((err) => console.error(err));
 }
 
-  function displayActorHistory() {
+async function updateActorHistory(id) {
+  await fetch(`${API_URL}/3/person/${id}`, options)
+    .then((res) => res.json())
+    .then((res) => {
+      let actorName = res.name;
 
-    const history = JSON.parse(sessionStorage.getItem('actorHistory')) || [];
+      let history = JSON.parse(sessionStorage.getItem("actorHistory")) || [];
+      history = [
+        { id, name: actorName },
+        ...history.filter((actor) => actor.id !== id),
+      ];
+      if (history.length > 3) {
+        history.pop();
+      }
 
-    historyList.innerHTML = '';
+      sessionStorage.setItem("actorHistory", JSON.stringify(history));
+      displayActorHistory();
+    })
+    .catch((err) => console.error(err));
+}
 
-    history.forEach(({id, name}) => {
-      const button2 = document.createElement('button');
-      button2.innerHTML = `<a id="${id}" href="#">${name}</a>`;
+function displayActorHistory() {
+  const history = JSON.parse(sessionStorage.getItem("actorHistory")) || [];
 
-      button2.addEventListener("click", () => {
-          displayPersonInfo(id);
-          apiResults.innerHTML = "";
-      });
+  historyList.innerHTML = "";
 
-      historyList.appendChild(button2);
+  history.forEach(({ id, name }) => {
+    const button2 = document.createElement("button");
+    button2.innerHTML = `<a id="${id}" href="#">${name}</a>`;
+
+    button2.addEventListener("click", () => {
+      displayPersonInfo(id);
+      apiResults.innerHTML = "";
+    });
+
+    historyList.appendChild(button2);
   });
-  };
-
+}
 
 function capitalizeFirstLetter(word) {
   wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
@@ -249,11 +300,9 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", searchPerson);
 });
 
-
-window.onload = function() {
-  displayActorHistory(); 
+window.onload = function () {
+  displayActorHistory();
 };
-
 
 export default {
   capitalizeFirstLetter,
