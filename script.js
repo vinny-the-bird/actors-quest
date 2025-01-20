@@ -10,6 +10,7 @@ const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById("history");
 
+
 // TODO: search in both crew & cast. Fix for only cast
 function searchPerson() {
   apiResults.innerHTML = "";
@@ -93,6 +94,15 @@ function displayPersonInfo(id) {
         infoPhoto.setAttribute("alt", `${res.name}`);
       }
 
+
+        // TODO: pas utilisation de classe on bosse avec la fonction
+      let favorite = document.createElement("button");
+      favorite.textContent = "♡"; 
+      favorite.classList.add("heartButton");
+      favorite.addEventListener("click", () => { 
+        toggleFavorite(favorite, id);
+      });
+
       let infoBirthday = document.createElement("p");
       infoBirthday.innerText = `Naissance : ${res.birthday}`;
 
@@ -132,6 +142,7 @@ function displayPersonInfo(id) {
 
       infoDisplayed.appendChild(infoName);
       infoDisplayed.appendChild(infoPhoto);
+      infoDisplayed.appendChild(favorite);
 
       if (res.birthday) {
         infoDisplayed.appendChild(infoBirthday);
@@ -300,6 +311,22 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", searchPerson);
 });
 
+
+const whiteHeart = '\u2661';
+const blackHeart = '\u2665';
+
+  // TODO: faire l'array, le call pour verifi couleur coeur sur fiche actor
+function toggleFavorite(button, id) {
+  if (button.textContent === whiteHeart) {
+    button.textContent = blackHeart;
+    console.log(`Actor ${id} is now in favorites`);
+
+  } else {
+    button.textContent = whiteHeart;
+    console.log(`Actor ${id} is no more in favorites`);
+  
+  }
+}
 window.onload = function () {
   displayActorHistory();
 };

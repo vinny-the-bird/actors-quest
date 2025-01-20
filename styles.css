@@ -62,3 +62,13 @@ a {
   margin: 0;
   font-size: 16px;
 }
+
+.heartButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+.heartButton:hover {
+  color: red;
+}
