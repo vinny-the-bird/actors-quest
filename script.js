@@ -10,7 +10,6 @@ const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById("history");
 
-
 // TODO: search in both crew & cast. Fix for only cast
 function searchPerson() {
   apiResults.innerHTML = "";
@@ -94,14 +93,20 @@ function displayPersonInfo(id) {
         infoPhoto.setAttribute("alt", `${res.name}`);
       }
 
-
-        // TODO: pas utilisation de classe on bosse avec la fonction
+      // TODO: pas utilisation de classe on bosse avec la fonction
       let favorite = document.createElement("button");
-      favorite.textContent = "♡"; 
+
+      console.log(favorites)
+      favorite.textContent = "♡";
       favorite.classList.add("heartButton");
-      favorite.addEventListener("click", () => { 
+      favorite.addEventListener("click", () => {
         toggleFavorite(favorite, id);
       });
+
+      if (favorites.includes(id)) {
+        console.log("this actor is in favorites!");
+        toggleFavorite(favorite, id)
+      }
 
       let infoBirthday = document.createElement("p");
       infoBirthday.innerText = `Naissance : ${res.birthday}`;
@@ -311,22 +316,28 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", searchPerson);
 });
 
+const whiteHeart = "\u2661";
+const blackHeart = "\u2665";
+const favorites = [];
 
-const whiteHeart = '\u2661';
-const blackHeart = '\u2665';
-
-  // TODO: faire l'array, le call pour verifi couleur coeur sur fiche actor
+// TODO: faire l'array, le call pour verifi couleur coeur sur fiche actor
 function toggleFavorite(button, id) {
   if (button.textContent === whiteHeart) {
     button.textContent = blackHeart;
-    console.log(`Actor ${id} is now in favorites`);
-
+    if(!favorites.includes(id)) {
+      favorites.push(id);
+      console.log(`Actor ${id} is now in favorites`);
+    }
   } else {
     button.textContent = whiteHeart;
+    const index = favorites.indexOf(id);
+    const itemToRemove = favorites.splice(index, 1);
+    console.log("removing: ", itemToRemove);
     console.log(`Actor ${id} is no more in favorites`);
-  
   }
+  console.log(favorites);
 }
+
 window.onload = function () {
   displayActorHistory();
 };
