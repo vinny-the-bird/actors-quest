@@ -10,6 +10,18 @@ const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById("history");
 
+const whiteHeart = "\u2661";
+const blackHeart = "\u2665";
+let favorites = []; // call local storage array here ?
+
+if (localStorage.getItem("favorites") === "") {
+  localStorage.setItem("favorites", JSON.stringify([]));
+}
+
+const favoritesSaved = localStorage.getItem("favorites");
+const favoritesParsed = JSON.parse(favoritesSaved);
+favorites = favoritesParsed;
+
 // TODO: search in both crew & cast. Fix for only cast
 function searchPerson() {
   apiResults.innerHTML = "";
@@ -93,10 +105,9 @@ function displayPersonInfo(id) {
         infoPhoto.setAttribute("alt", `${res.name}`);
       }
 
-      // TODO: pas utilisation de classe on bosse avec la fonction
       let favorite = document.createElement("button");
 
-      console.log(favorites)
+      // console.log(favorites)
       favorite.textContent = "♡";
       favorite.classList.add("heartButton");
       favorite.addEventListener("click", () => {
@@ -316,15 +327,13 @@ document.addEventListener("DOMContentLoaded", () => {
   button.addEventListener("click", searchPerson);
 });
 
-const whiteHeart = "\u2661";
-const blackHeart = "\u2665";
-const favorites = [];
+// TODO: display favorites as button in sidepage
 
-// TODO: faire l'array, le call pour verifi couleur coeur sur fiche actor
 function toggleFavorite(button, id) {
   if (button.textContent === whiteHeart) {
     button.textContent = blackHeart;
-    if(!favorites.includes(id)) {
+    console.log("valeur de favorites: ", favorites);
+    if (!favorites.includes(id)) {
       favorites.push(id);
       console.log(`Actor ${id} is now in favorites`);
     }
@@ -335,7 +344,10 @@ function toggleFavorite(button, id) {
     console.log("removing: ", itemToRemove);
     console.log(`Actor ${id} is no more in favorites`);
   }
+
   console.log(favorites);
+  const stringifiedFavorites = JSON.stringify(favorites);
+  localStorage.setItem("favorites", stringifiedFavorites);
 }
 
 window.onload = function () {
