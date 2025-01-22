@@ -9,18 +9,26 @@ const apiResults = document.getElementById("results");
 const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById("history");
+const favoritesList = document.getElementById("favorites");
 
 const whiteHeart = "\u2661";
 const blackHeart = "\u2665";
-let favorites = []; // call local storage array here ?
+let favoritesArray = []; // call local storage array here ?
 
-if (localStorage.getItem("favorites") === "") {
+if (localStorage.getItem("favorites") === null || "") {
   localStorage.setItem("favorites", JSON.stringify([]));
 }
 
 const favoritesSaved = localStorage.getItem("favorites");
+console.log("🚀 ~ favoritesSaved:", favoritesSaved)
+
 const favoritesParsed = JSON.parse(favoritesSaved);
-favorites = favoritesParsed;
+console.log("🚀 ~ favoritesParsed:", favoritesParsed)
+
+favoritesArray = favoritesParsed;
+console.log("🚀 ~ favoritesArray:", favoritesArray)
+
+
 
 // TODO: search in both crew & cast. Fix for only cast
 function searchPerson() {
@@ -105,18 +113,16 @@ function displayPersonInfo(id) {
         infoPhoto.setAttribute("alt", `${res.name}`);
       }
 
-      let favorite = document.createElement("button");
+      let favoriteBtn = document.createElement("button");
 
-      // console.log(favorites)
-      favorite.textContent = "♡";
-      favorite.classList.add("heartButton");
-      favorite.addEventListener("click", () => {
-        toggleFavorite(favorite, id);
+      favoriteBtn.textContent = "♡";
+      favoriteBtn.classList.add("heartButton");
+      favoriteBtn.addEventListener("click", () => {
+        toggleFavorite(favoriteBtn, id);
       });
 
-      if (favorites.includes(id)) {
-        console.log("this actor is in favorites!");
-        toggleFavorite(favorite, id)
+      if (favoritesArray.includes(id)) {
+        toggleFavorite(favoriteBtn, id)
       }
 
       let infoBirthday = document.createElement("p");
@@ -158,7 +164,7 @@ function displayPersonInfo(id) {
 
       infoDisplayed.appendChild(infoName);
       infoDisplayed.appendChild(infoPhoto);
-      infoDisplayed.appendChild(favorite);
+      infoDisplayed.appendChild(favoriteBtn);
 
       if (res.birthday) {
         infoDisplayed.appendChild(infoBirthday);
@@ -201,7 +207,6 @@ function displayActorMovies(id) {
         moviesResults.appendChild(movieList);
 
         movieTitle.addEventListener("click", () => {
-          console.log(`show actors from ${movieTitle.innerText} ${movieId}`);
           searchActorsByMovie(movieId);
         });
       }
@@ -309,6 +314,30 @@ function displayActorHistory() {
   });
 }
 
+
+  // ==== WIP FAVORITES ==== 
+
+// function displayActorFavorites() {
+//   const myFavorites = JSON.parse(sessionStorage.getItem("favorites")) || [];
+//   console.log("== access displayActorFavorites ==")
+//   console.log("🚀 ~ displayActorFavorites ~ myFavorites:", myFavorites)
+
+//   // myFavorites.innerHTML = "";
+
+//   myFavorites.forEach(({ id, name }) => {
+//     const button3 = document.createElement("button");
+//     button3.innerHTML = `<a id="${id}" href="#">${name}</a>`;
+
+//     button3.addEventListener("click", () => {
+//       displayPersonInfo(id);
+//       apiResults.innerHTML = "";
+//     });
+
+//     favoritesList.appendChild(button3);
+//   });
+// }
+
+
 function capitalizeFirstLetter(word) {
   wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
   return wordFirstLetterCap;
@@ -328,30 +357,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // TODO: display favorites as button in sidepage
-
 function toggleFavorite(button, id) {
   if (button.textContent === whiteHeart) {
     button.textContent = blackHeart;
-    console.log("valeur de favorites: ", favorites);
-    if (!favorites.includes(id)) {
-      favorites.push(id);
-      console.log(`Actor ${id} is now in favorites`);
+    if (!favoritesArray.includes(id)) {
+      favoritesArray.push(id);
+      console.log("Adding to favs: ", id)
     }
   } else {
     button.textContent = whiteHeart;
-    const index = favorites.indexOf(id);
-    const itemToRemove = favorites.splice(index, 1);
-    console.log("removing: ", itemToRemove);
-    console.log(`Actor ${id} is no more in favorites`);
+    const index = favoritesArray.indexOf(id);
+    const itemToRemove = favoritesArray.splice(index, 1);
+    console.log("Removing from favs: ", id)
+
   }
 
-  console.log(favorites);
-  const stringifiedFavorites = JSON.stringify(favorites);
+  const stringifiedFavorites = JSON.stringify(favoritesArray);
   localStorage.setItem("favorites", stringifiedFavorites);
+  console.log("update fav array = ", favoritesArray)
 }
 
 window.onload = function () {
   displayActorHistory();
+  // displayActorFavorites();
 };
 
 export default {
