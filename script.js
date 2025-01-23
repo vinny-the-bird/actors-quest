@@ -9,7 +9,7 @@ const apiResults = document.getElementById("results");
 const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById("history");
-const favoritesList = document.getElementById("favorites");
+const favoritesList = document.getElementById("favoritesContainer");
 
 let favoritesArray = JSON.parse(localStorage.getItem("favorites")) || [];
 
@@ -85,7 +85,6 @@ function searchPerson() {
           displayPersonInfo(personId, person_name);
           displayActorMovies(personId);
           updateActorHistory(personId);
-          // updateActorFavorites(personId) FLAG
         });
       }
     })
@@ -316,68 +315,36 @@ function displayActorHistory() {
 
 // ==== WIP FAVORITES ====
 
-function displayActorFavorites() {}
+// function displayActorFavorites() {}
 
-function updateActorFavorites(id) {}
+function updateFavoritesList() {
+  // const favoritesContainer = document.getElementById("favoritesContainer");
+  favoritesList.innerHTML = ""; // Réinitialise l'affichage
 
-// function displayActorFavorites() {
-//   const myFavorites = JSON.parse(sessionStorage.getItem("favorites")) || [];
-//   console.log("== access displayActorFavorites ==")
-//   console.log("🚀 ~ displayActorFavorites ~ myFavorites:", myFavorites)
+  if (favoritesArray.length === 0) {
+    // Affiche un message si la liste est vide
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "Aucun favori pour le moment.";
+    favoritesList.appendChild(emptyMessage);
+    return;
+  }
 
-//   // myFavorites.innerHTML = "";
+  favoritesArray.forEach(favorite => {
+    // Crée un bouton pour chaque favori
+    const favoriteBtn = document.createElement("button");
+    favoriteBtn.textContent = favorite.name;
+    favoriteBtn.classList.add("favoriteButton");
 
-//   myFavorites.forEach(({ id, name }) => {
-//     const button3 = document.createElement("button");
-//     button3.innerHTML = `<a id="${id}" href="#">${name}</a>`;
+    // Ajoute un événement pour afficher les détails de l'acteur
+    favoriteBtn.addEventListener("click", () => {
+      displayPersonInfo(favorite.id, favorite.name);
+    });
 
-//     button3.addEventListener("click", () => {
-//       displayPersonInfo(id);
-//       apiResults.innerHTML = "";
-//     });
-
-//     favoritesList.appendChild(button3);
-//   });
-// }
-
-function capitalizeFirstLetter(word) {
-  wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
-  return wordFirstLetterCap;
+    favoritesList.appendChild(favoriteBtn);
+  });
 }
 
-const options = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${API_TOKEN}`,
-  },
-};
 
-document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("searchButton");
-  button.addEventListener("click", searchPerson);
-});
-
-// TODO: display favorites as button in sidepage
-// function toggleFavorite(button, id, name) {
-//   if (button.textContent === whiteHeart) {
-//     button.textContent = blackHeart;
-//     if (!favoritesArray.includes(id)) {
-//       // favoritesArray.push([`${id}, ${name}`]);
-//       favoritesArray.push({ id, name });
-//       console.log(`Adding to favs: id ${id} = ${name}`);
-//     }
-//   } else {
-//     button.textContent = whiteHeart;
-//     const index = favoritesArray.indexOf(id);
-//     const itemToRemove = favoritesArray.splice(index, 1);
-//     console.log(`Removing from favs: id ${id} = ${name}`);
-//   }
-
-//   const stringifiedFavorites = JSON.stringify(favoritesArray);
-//   localStorage.setItem("favorites", stringifiedFavorites);
-//   console.log("update fav array = ", favoritesArray);
-// }
 
 function toggleFavorite(button, id, name) {
   const isFavorite = favoritesArray.some(favorite => favorite.id === id);
@@ -397,12 +364,39 @@ function toggleFavorite(button, id, name) {
 
   localStorage.setItem("favorites", JSON.stringify(favoritesArray));
   console.log("Updated fav array: ", favoritesArray);
+  updateFavoritesList();
 }
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  const storedFavorites = localStorage.getItem("favorites");
+  if (storedFavorites) {
+    favoritesArray = JSON.parse(storedFavorites);
+  }
+})
+
+  function capitalizeFirstLetter(word) {
+    wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
+    return wordFirstLetterCap;
+  }
+  
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
+  };
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    const button = document.getElementById("searchButton");
+    button.addEventListener("click", searchPerson);
+  });
+  
+
 window.onload = function () {
   displayActorHistory();
-  // displayActorFavorites();
+  updateFavoritesList();
 };
 
 export default {
