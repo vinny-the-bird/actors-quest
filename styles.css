@@ -36,9 +36,8 @@ li {
   cursor: pointer;
 }
 
-
 img {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 a {
@@ -55,8 +54,6 @@ a {
   margin: 5px;
   cursor: pointer;
 }
-
-
 
 .active {
   background-color: #1ba330;
@@ -76,4 +73,31 @@ a {
 }
 .heartButton:hover {
   color: red;
+}
+
+.pagination {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.pagination li {
+  margin: 0 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f9f9f9;
+}
+
+.pagination li:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination li[style*="font-weight: bold"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
 }
