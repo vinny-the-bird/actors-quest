@@ -18,13 +18,8 @@ if (localStorage.getItem("favorites") === null || "") {
 }
 
 const favoritesSaved = localStorage.getItem("favorites");
-console.log("🚀 ~ favoritesSaved:", favoritesSaved);
-
 const favoritesParsed = JSON.parse(favoritesSaved);
-console.log("🚀 ~ favoritesParsed:", favoritesParsed);
-
 favoritesArray = favoritesParsed;
-console.log("🚀 ~ favoritesArray:", favoritesArray);
 
 let currentPage = 1;
 const actorsPerPage = 9;
@@ -127,7 +122,6 @@ function searchPerson() {
 }
 
 function displayPersonInfo(id, name) {
-  console.log(`clicked displayPersonInfo: ${id} - ${name}`);
   infoDisplayed.innerHTML = "";
   fetch(`${API_URL}/3/person/${id}`, options)
     .then((res) => res.json())
@@ -373,18 +367,15 @@ function toggleFavorite(button, id, name) {
   if (!isFavorite) {
     button.textContent = "♥";
     favoritesArray.push({ id, name });
-    console.log(`Adding to favs: id ${id} = ${name}`);
   } else {
     button.textContent = "♡";
     const index = favoritesArray.findIndex((favorite) => favorite.id === id);
     if (index !== -1) {
       favoritesArray.splice(index, 1);
-      console.log(`Removing from favs: id ${id} = ${name}`);
     }
   }
 
   localStorage.setItem("favorites", JSON.stringify(favoritesArray));
-  console.log("Updated fav array: ", favoritesArray);
   updateFavoritesList();
 }
 
