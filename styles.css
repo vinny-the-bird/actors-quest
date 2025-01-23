@@ -7,9 +7,14 @@ body {
 }
 
 .subContainer {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 100%;
   padding: 30px;
+}
+
+.favoritesList {
+  border: 1px solid black;
+  margin-bottom: 20px;
 }
 
 #research {
@@ -31,9 +36,8 @@ li {
   cursor: pointer;
 }
 
-
 img {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 a {
@@ -51,8 +55,6 @@ a {
   cursor: pointer;
 }
 
-
-
 .active {
   background-color: #1ba330;
   color: azure;
@@ -61,4 +63,41 @@ a {
 .profile h4 {
   margin: 0;
   font-size: 16px;
+}
+
+.heartButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+.heartButton:hover {
+  color: red;
+}
+
+.pagination {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.pagination li {
+  margin: 0 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f9f9f9;
+}
+
+.pagination li:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination li[style*="font-weight: bold"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
 }
