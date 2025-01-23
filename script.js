@@ -9,6 +9,23 @@ const apiResults = document.getElementById("results");
 const infoDisplayed = document.getElementById("information");
 const moviesResults = document.getElementById("filmography");
 const historyList = document.getElementById("history");
+const favoritesList = document.getElementById("favoritesContainer");
+
+let favoritesArray = JSON.parse(localStorage.getItem("favorites")) || [];
+
+if (localStorage.getItem("favorites") === null || "") {
+  localStorage.setItem("favorites", JSON.stringify([]));
+}
+
+
+const favoritesSaved = localStorage.getItem("favorites");
+console.log("🚀 ~ favoritesSaved:", favoritesSaved);
+
+const favoritesParsed = JSON.parse(favoritesSaved);
+console.log("🚀 ~ favoritesParsed:", favoritesParsed);
+
+favoritesArray = favoritesParsed;
+console.log("🚀 ~ favoritesArray:", favoritesArray);
 
 // TODO: search in both crew & cast. Fix for only cast
 function searchPerson() {
@@ -29,6 +46,7 @@ function searchPerson() {
       for (let i = 0; i < res.results.length; i++) {
         let personProfile = document.createElement("div");
         let personId = res.results[i].id;
+        let person_name = res.results[i].name;
 
         personProfile.setAttribute("id", `${personId}`);
         personProfile.setAttribute("class", "profile");
@@ -64,7 +82,7 @@ function searchPerson() {
             behavior: "smooth",
           });
 
-          displayPersonInfo(personId);
+          displayPersonInfo(personId, person_name);
           displayActorMovies(personId);
           updateActorHistory(personId);
         });
@@ -73,8 +91,8 @@ function searchPerson() {
     .catch((err) => console.error(err));
 }
 
-function displayPersonInfo(id) {
-  console.log("clicked displayPersonInfo : ", id);
+function displayPersonInfo(id, name) {
+  console.log(`clicked displayPersonInfo: ${id} - ${name}`);
   infoDisplayed.innerHTML = "";
   fetch(`${API_URL}/3/person/${id}`, options)
     .then((res) => res.json())
@@ -92,6 +110,19 @@ function displayPersonInfo(id) {
         infoPhoto.setAttribute("src", `${API_INFO_PHOTO}${res.profile_path}`);
         infoPhoto.setAttribute("alt", `${res.name}`);
       }
+
+      const favoriteBtn = document.createElement("button");
+      favoriteBtn.textContent = "♡";
+      favoriteBtn.classList.add("heartButton");
+
+      if (favoritesArray.some(favorite => favorite.id === id)) {
+        favoriteBtn.textContent = "♥"; 
+      }
+
+      favoriteBtn.addEventListener("click", () => {
+        toggleFavorite(favoriteBtn, id, name);
+      });
+
 
       let infoBirthday = document.createElement("p");
       infoBirthday.innerText = `Naissance : ${res.birthday}`;
@@ -132,6 +163,7 @@ function displayPersonInfo(id) {
 
       infoDisplayed.appendChild(infoName);
       infoDisplayed.appendChild(infoPhoto);
+      infoDisplayed.appendChild(favoriteBtn);
 
       if (res.birthday) {
         infoDisplayed.appendChild(infoBirthday);
@@ -174,7 +206,6 @@ function displayActorMovies(id) {
         moviesResults.appendChild(movieList);
 
         movieTitle.addEventListener("click", () => {
-          console.log(`show actors from ${movieTitle.innerText} ${movieId}`);
           searchActorsByMovie(movieId);
         });
       }
@@ -282,26 +313,90 @@ function displayActorHistory() {
   });
 }
 
-function capitalizeFirstLetter(word) {
-  wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
-  return wordFirstLetterCap;
+// ==== WIP FAVORITES ====
+
+// function displayActorFavorites() {}
+
+function updateFavoritesList() {
+  // const favoritesContainer = document.getElementById("favoritesContainer");
+  favoritesList.innerHTML = ""; // Réinitialise l'affichage
+
+  if (favoritesArray.length === 0) {
+    // Affiche un message si la liste est vide
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "Aucun favori pour le moment.";
+    favoritesList.appendChild(emptyMessage);
+    return;
+  }
+
+  favoritesArray.forEach(favorite => {
+    // Crée un bouton pour chaque favori
+    const favoriteBtn = document.createElement("button");
+    favoriteBtn.textContent = favorite.name;
+    favoriteBtn.classList.add("favoriteButton");
+
+    // Ajoute un événement pour afficher les détails de l'acteur
+    favoriteBtn.addEventListener("click", () => {
+      displayPersonInfo(favorite.id, favorite.name);
+    });
+
+    favoritesList.appendChild(favoriteBtn);
+  });
 }
 
-const options = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${API_TOKEN}`,
-  },
-};
+
+
+function toggleFavorite(button, id, name) {
+  const isFavorite = favoritesArray.some(favorite => favorite.id === id);
+
+  if (!isFavorite) {
+    button.textContent = "♥";
+    favoritesArray.push({ id, name });
+    console.log(`Adding to favs: id ${id} = ${name}`);
+  } else {
+    button.textContent = "♡";
+    const index = favoritesArray.findIndex(favorite => favorite.id === id);
+    if (index !== -1) {
+      favoritesArray.splice(index, 1);
+      console.log(`Removing from favs: id ${id} = ${name}`);
+    }
+  }
+
+  localStorage.setItem("favorites", JSON.stringify(favoritesArray));
+  console.log("Updated fav array: ", favoritesArray);
+  updateFavoritesList();
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("searchButton");
-  button.addEventListener("click", searchPerson);
-});
+  const storedFavorites = localStorage.getItem("favorites");
+  if (storedFavorites) {
+    favoritesArray = JSON.parse(storedFavorites);
+  }
+})
+
+  function capitalizeFirstLetter(word) {
+    wordFirstLetterCap = word.charAt(0).toUpperCase() + word.slice(1);
+    return wordFirstLetterCap;
+  }
+  
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
+  };
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    const button = document.getElementById("searchButton");
+    button.addEventListener("click", searchPerson);
+  });
+  
 
 window.onload = function () {
   displayActorHistory();
+  updateFavoritesList();
 };
 
 export default {

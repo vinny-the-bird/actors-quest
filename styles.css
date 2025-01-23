@@ -7,9 +7,14 @@ body {
 }
 
 .subContainer {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 100%;
   padding: 30px;
+}
+
+.favoritesList {
+  border: 1px solid black;
+  margin-bottom: 20px;
 }
 
 #research {
@@ -61,4 +66,14 @@ a {
 .profile h4 {
   margin: 0;
   font-size: 16px;
+}
+
+.heartButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+.heartButton:hover {
+  color: red;
 }
